@@ -33,6 +33,10 @@ class Album < ApplicationRecord
     name == UNKNOWN_NAME
   end
 
+  def artist_name
+    artist&.name
+  end
+
   private
 
   def set_default_name
