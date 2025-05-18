@@ -89,6 +89,7 @@ Rails.application.routes.draw do
       resource :authentication, only: [:create, :destroy]
       resource :system, only: [:show]
       resources :songs, only: [:index, :show]
+      resources :albums, only: [:index, :show]
       resources :stream, only: [:new]
       resources :transcoded_stream, only: [:new]
 
