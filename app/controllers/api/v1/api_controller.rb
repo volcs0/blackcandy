@@ -4,6 +4,8 @@ module Api
   module V1
     class ApiController < ApplicationController
       skip_before_action :verify_authenticity_token
+      before_action :find_current_session
+      before_action :require_login
 
       private
 
@@ -15,6 +17,14 @@ module Api
 
       def require_login
         head :unauthorized unless logged_in?
+      end
+
+      def logged_in?
+        current_user.present?
+      end
+
+      def current_user
+        Current.session&.user
       end
     end
   end

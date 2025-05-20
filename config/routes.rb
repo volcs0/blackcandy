@@ -88,11 +88,32 @@ Rails.application.routes.draw do
     namespace :v1 do
       resource :authentication, only: [:create, :destroy]
       resource :system, only: [:show]
+
+      # Nested resources for albums and artists
+      resources :albums, only: [:index, :show] do
+        resources :songs, only: [:index] # /api/v1/albums/:album_id/songs
+      end
+
+      resources :artists, only: [:index, :show] do
+        resources :albums, only: [:index] # /api/v1/artists/:artist_id/albums
+        resources :songs, only: [:index]  # /api/v1/artists/:artist_id/songs
+      end
+
+      # Songs outside of nested context
       resources :songs, only: [:index, :show]
-      resources :albums, only: [:index, :show]
+
+      # Playlists CRUD and song management
+      resources :playlists do
+        resources :songs, only: [:index]
+        post 'add_song/:song_id', to: 'playlists#add_song', as: 'add_song'
+        delete 'remove_song/:song_id', to: 'playlists#remove_song', as: 'remove_song'
+      end
+
+      # Other existing endpoints
       resources :stream, only: [:new]
       resources :transcoded_stream, only: [:new]
 
+      # Current playlist management
       namespace :current_playlist do
         resources :songs, only: [:index, :destroy, :create] do
           put "move", on: :member
@@ -105,9 +126,14 @@ Rails.application.routes.draw do
         end
       end
 
+      # Favorite playlist management
       namespace :favorite_playlist do
         resources :songs, only: [:create, :destroy]
       end
+
+      # Search endpoint
+      get 'search', to: 'search#index'
     end
   end
+
 end

@@ -1,8 +1,14 @@
-class Api::V1::AlbumsController < Api::V1::BaseController
-  def index
+class Api::V1::AlbumsController < Api::V1::ApiController
+
+def index
+  if params[:artist_id]
+    albums = Album.where(artist_id: params[:artist_id])
+    render json: albums
+  else
     albums = Album.all
-    render json: albums.as_json(only: [:id, :name, :cover], methods: [:artist_name])
+    render json: albums
   end
+end
 
   def show
     album = Album.find(params[:id])
